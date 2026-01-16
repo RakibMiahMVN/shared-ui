@@ -1,0 +1,5 @@
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { ChevronDown, ChevronUp } from "lucide-react";
+export function DateDivider({ date, showExpandToggle = false, isExpanded = false, onToggleExpand, }) {
+    return (_jsxs("div", { className: "relative flex items-center py-3", children: [_jsx("div", { className: "absolute bottom-0 left-[5px] top-0 w-[1px] bg-[#E5E7EB]" }), _jsx("div", { className: "relative z-10 bg-white pr-3", children: _jsx("span", { className: "text-xs text-[#637381]", children: date }) }), _jsx("div", { className: "h-[1px] flex-1 bg-[#E5E7EB]" }), showExpandToggle && (_jsx("button", { onClick: onToggleExpand, className: "relative z-10 flex items-center gap-1.5 bg-white pl-3 text-xs text-[#637381] transition-colors hover:text-[#008060]", children: isExpanded ? (_jsxs(_Fragment, { children: [_jsx(ChevronUp, { className: "h-3.5 w-3.5" }), _jsx("span", { children: "Collapse all" })] })) : (_jsxs(_Fragment, { children: [_jsx(ChevronDown, { className: "h-3.5 w-3.5" }), _jsx("span", { children: "Expand all" })] })) }))] }));
+}
