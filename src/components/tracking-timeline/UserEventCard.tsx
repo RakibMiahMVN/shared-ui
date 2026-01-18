@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ITrackingEvent } from "./types";
+import { formatDistance } from "date-fns";
 import {
   MoreHorizontal,
   Pencil,
@@ -45,7 +46,9 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
 
   const userName = event.causer?.name || "User";
   const userInitials = event.causer?.name?.charAt(0).toUpperCase() || "U";
-  const timestamp = new Date(event.created_at).toLocaleString();
+  const timestamp = formatDistance(new Date(event.created_at), new Date(), {
+    addSuffix: true,
+  }).replace("about ", "");
 
   // Determine visibility based on ACLs
   const visibility = "public"; // Mock - in real implementation, this would come from event data
@@ -326,7 +329,13 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                             Reply
                           </span>
                           <span className="text-xs text-[#637381]">
-                            {new Date(reply.created_at).toLocaleString()}
+                            {formatDistance(
+                              new Date(reply.created_at),
+                              new Date(),
+                              {
+                                addSuffix: true,
+                              },
+                            ).replace("about ", "")}
                           </span>
                         </div>
                         <p

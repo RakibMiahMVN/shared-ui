@@ -85,7 +85,7 @@ export interface TrackingTimelineConfig {
 
   // Utils
   formatDateDisplay: (date: string) => string;
-  extractMentions: (html: string) => string[];
+  extractMentions: (html: string) => number[];
 
   // Constants
   TrackingEventVisibilityEnum: {
