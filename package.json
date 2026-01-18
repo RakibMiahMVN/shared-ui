@@ -21,7 +21,8 @@
   "dependencies": {
     "react": "^18.0.0",
     "lucide-react": "^0.344.0",
-    "framer-motion": "^10.16.2"
+    "framer-motion": "^10.16.2",
+    "date-fns": "^3.0.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.0.0",

@@ -16,6 +16,7 @@ interface TrackingTimelineProps {
   onAddComment: (html: string) => Promise<void>;
   isSubmittingComment: boolean;
   commentError?: any;
+  onReply?: (eventId: number, content: string) => Promise<void>;
 }
 
 const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
@@ -31,6 +32,7 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
   onAddComment,
   isSubmittingComment,
   commentError,
+  onReply,
 }) => {
   const {
     useTimelineData,
@@ -60,25 +62,21 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
     timelineItems.forEach((timelineItem) => {
       const itemId = timelineItem.id.toString();
       groupedEvents[itemId] = trackingEvents
-        .filter(
-          (event) => event.timelineItem?.id === timelineItem.id,
-        )
+        .filter((event) => event.timeline_item?.id === timelineItem.id)
         .sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() -
-            new Date(a.createdAt).getTime(),
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
     });
   } else {
     // Group by date for staff/public views
     const sortedEvents = [...trackingEvents].sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() -
-        new Date(a.createdAt).getTime(),
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
     groupedEvents = sortedEvents.reduce(
       (groups, event) => {
-        const date = new Date(event.createdAt).toDateString();
+        const date = new Date(event.created_at).toDateString();
         if (!groups[date]) groups[date] = [];
         groups[date].push(event);
         return groups;
@@ -132,8 +130,12 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                 <TrendingUp className="h-5 w-5 text-[#008060]" />
                 <h1 className="text-lg text-[#212B36]">
                   {isCustomerView
-                    ? `${productType === "shipment" ? "Shipment" : "Purchase"} Status`
-                    : `${productType === "shipment" ? "Shipment" : "Purchase"} Activity`}
+                    ? `${
+                        productType === "shipment" ? "Shipment" : "Purchase"
+                      } Status`
+                    : `${
+                        productType === "shipment" ? "Shipment" : "Purchase"
+                      } Activity`}
                 </h1>
               </div>
             </div>
@@ -272,7 +274,8 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                         {events.map((event, index) => {
                           // Check if this is an extension message (starts with [AI SMART DEALS])
                           const isExtensionMessage =
-                            event.content?.startsWith("[AI SMART DEALS]") || false;
+                            event.message?.startsWith("[AI SMART DEALS]") ||
+                            false;
 
                           // Use UserEventCard for user messages (events without a label and not extension messages), otherwise use system message styling
                           // For customer events, treat them as system events since they're automated notifications
@@ -285,6 +288,7 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                               <UserEventCard
                                 key={event.id}
                                 event={event}
+                                onReply={onReply}
                               />
                             );
                           }

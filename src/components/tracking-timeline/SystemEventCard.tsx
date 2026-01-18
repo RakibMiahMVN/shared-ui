@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { TrackingEvent } from "./types";
+import { ITrackingEvent } from "./types";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SystemEventCardProps {
-  event: TrackingEvent;
+  event: ITrackingEvent;
   isLast: boolean;
 }
 
@@ -16,7 +16,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
 
   // Check if this is an extension message
   const isExtensionMessage =
-    event.content?.startsWith("[AI SMART DEALS]") || false;
+    event.message?.startsWith("[AI SMART DEALS]") || false;
 
   // Parse extension message format: [AI SMART DEALS] [TEMPLATE:Template Name] [MESSAGE:Actual message content]
   const parseExtensionMessage = (message: string) => {
@@ -31,7 +31,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
   };
 
   const extensionData = isExtensionMessage
-    ? parseExtensionMessage(event.content || "")
+    ? parseExtensionMessage(event.message || "")
     : null;
 
   const bulletColors = {
@@ -68,7 +68,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
     }
 
     const label = event.label?.toLowerCase() || "";
-    const message = event.content?.toLowerCase() || "";
+    const message = event.message?.toLowerCase() || "";
 
     if (
       label.includes("error") ||
@@ -124,7 +124,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
     return <span>{title}</span>;
   };
 
-  const timestamp = new Date(event.createdAt).toLocaleTimeString("en-US", {
+  const timestamp = new Date(event.created_at).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -144,10 +144,10 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
           {extensionData.content}
         </div>
       </div>
-    ) : event.content ? (
+    ) : event.message ? (
       <div
         className="text-sm text-[#637381]"
-        dangerouslySetInnerHTML={{ __html: event.content || "" }}
+        dangerouslySetInnerHTML={{ __html: event.message || "" }}
       />
     ) : null;
 

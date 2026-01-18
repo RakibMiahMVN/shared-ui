@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TrackingEvent } from "./types";
+import { ITrackingEvent } from "./types";
 import {
   MoreHorizontal,
   Pencil,
@@ -19,7 +19,7 @@ interface Attachment {
 }
 
 interface UserEventCardProps {
-  event: TrackingEvent;
+  event: ITrackingEvent;
   onEdit?: (eventId: number, content: string) => Promise<void>;
   onDelete?: (eventId: number) => Promise<void>;
   onReply?: (eventId: number, content: string) => Promise<void>;
@@ -40,19 +40,19 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
   const [showReplies, setShowReplies] = useState(false);
 
   // Mock data - in real implementation, this would come from props
-  const replies: TrackingEvent[] = [];
+  const replies: ITrackingEvent[] = event.children || [];
   const allAttachments: Attachment[] = [];
 
-  const userName = "User"; // In real implementation, this would come from event data
-  const userInitials = "U";
-  const timestamp = new Date(event.createdAt).toLocaleString();
+  const userName = event.causer?.name || "User";
+  const userInitials = event.causer?.name?.charAt(0).toUpperCase() || "U";
+  const timestamp = new Date(event.created_at).toLocaleString();
 
   // Determine visibility based on ACLs
   const visibility = "public"; // Mock - in real implementation, this would come from event data
 
   const handleUpdateComment = async (
     eventId: string | number,
-    content: string
+    content: string,
   ) => {
     if (!content.trim()) return;
     if (onEdit) {
@@ -78,7 +78,7 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
 
   const handleReplySubmit = (
     replyMessage: string,
-    _visibility: "staff" | "public"
+    _visibility: "staff" | "public",
   ) => {
     if (onReply) {
       onReply(Number(event.id), replyMessage);
@@ -152,14 +152,14 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
             <div className="mt-2">
               <textarea
                 className="w-full rounded border border-[#E5E7EB] p-2 text-sm"
-                defaultValue={event.content}
+                defaultValue={event.message || ""}
                 placeholder="Edit comment..."
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleUpdateComment(
                       event.id,
-                      (e.target as HTMLTextAreaElement).value
+                      (e.target as HTMLTextAreaElement).value,
                     );
                   }
                   if (e.key === "Escape") {
@@ -174,9 +174,9 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                       event.id,
                       (
                         document.querySelector(
-                          "textarea"
+                          "textarea",
                         ) as HTMLTextAreaElement
-                      )?.value || ""
+                      )?.value || "",
                     )
                   }
                   className="rounded border border-[#008060] bg-[#008060] px-3 py-1 text-xs text-white hover:bg-[#006644]"
@@ -194,7 +194,7 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
           ) : (
             <p
               className="mb-2 text-sm leading-relaxed text-[#212B36]"
-              dangerouslySetInnerHTML={{ __html: event.content || "" }}
+              dangerouslySetInnerHTML={{ __html: event.message || "" }}
             />
           )}
 
@@ -294,7 +294,7 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                     e.preventDefault();
                     handleReplySubmit(
                       (e.target as HTMLTextAreaElement).value,
-                      "public"
+                      "public",
                     );
                   }
                 }}
@@ -326,13 +326,13 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                             Reply
                           </span>
                           <span className="text-xs text-[#637381]">
-                            {new Date(reply.createdAt).toLocaleString()}
+                            {new Date(reply.created_at).toLocaleString()}
                           </span>
                         </div>
                         <p
                           className="text-xs text-[#637381]"
                           dangerouslySetInnerHTML={{
-                            __html: reply.content || "",
+                            __html: reply.message || "",
                           }}
                         />
                       </div>

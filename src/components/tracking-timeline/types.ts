@@ -1,16 +1,35 @@
 // Generic types for the TrackingTimeline component
 export type FilterType = "staff" | "customer" | "public";
 
-export interface TrackingEvent {
-  id: string | number;
-  content?: string;
-  label?: string | null;
-  createdAt: string;
-  timelineItem?: {
+export interface ITrackingEvent {
+  object: string;
+  id: number;
+  visibility: "public" | "private";
+  label: string | null;
+  message: string | null;
+  causer: {
+    id: number;
+    name: string;
+    email: string;
+    phone?: string | null;
+    gravatar?: string | null;
+    shipping_mark?: string | null;
+    type?: string | null;
+  } | null;
+  template: string | null;
+  template_configuration: any | null;
+  display_order: number;
+  timeline_item?: {
     id: string | number;
     label: string;
     icon: string;
   };
+  event_images: any;
+  children: ITrackingEvent[];
+  acls: any;
+  mentions: any;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface TimelineItem {
@@ -22,14 +41,14 @@ export interface TimelineItem {
 export interface TrackingTimelineData {
   id: string | number;
   timelineItems?: TimelineItem[];
-  trackingEvents: TrackingEvent[];
+  trackingEvents: ITrackingEvent[];
 }
 
 export interface TrackingTimelineConfig {
   // Data fetching
   useTimelineData: (
     productId: string,
-    filter: FilterType
+    filter: FilterType,
   ) => {
     data: TrackingTimelineData | null;
     isLoading: boolean;
@@ -51,11 +70,12 @@ export interface TrackingTimelineConfig {
   }>;
 
   UserEventCard: React.ComponentType<{
-    event: TrackingEvent;
+    event: ITrackingEvent;
+    onReply?: (eventId: number, content: string) => Promise<void>;
   }>;
 
   SystemEventCard: React.ComponentType<{
-    event: TrackingEvent;
+    event: ITrackingEvent;
     isLast: boolean;
   }>;
 
