@@ -2,6 +2,7 @@ import React from "react";
 import { TrendingUp, ChevronUp, ChevronDown } from "lucide-react";
 import { DateDivider } from "./DateDivider";
 import { FilterType, TrackingTimelineConfig } from "./types";
+import { TrackerModel } from "../../models/trackingEventCollectionModel";
 
 interface TrackingTimelineProps {
   productId: string;
@@ -50,8 +51,10 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
     error,
   } = useTimelineData(productId, activeFilter);
 
-  const trackingEvents = tracker?.tracking_events?.data || [];
-  const timelineItems = tracker?.timeline?.timeline_items?.data;
+  const Tracker = tracker && new TrackerModel(tracker);
+
+  const trackingEvents = Tracker?.getTrackingEvents().getData() || [];
+  const timelineItems = Tracker?.getTimeline()?.getTimelineItems();
 
   // Group events based on active filter
   let groupedEvents: Record<string, typeof trackingEvents> = {};
@@ -62,21 +65,25 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
     timelineItems.forEach((timelineItem) => {
       const itemId = timelineItem.id.toString();
       groupedEvents[itemId] = trackingEvents
-        .filter((event) => event.timeline_item?.id === timelineItem.id)
+        .filter(
+          (event) => event.getTimelineItem()?.getId() === timelineItem.getId(),
+        )
         .sort(
           (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+            new Date(b.getCreatedAt()).getTime() -
+            new Date(a.getCreatedAt()).getTime(),
         );
     });
   } else {
     // Group by date for staff/public views
     const sortedEvents = [...trackingEvents].sort(
       (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        new Date(b.getCreatedAt()).getTime() -
+        new Date(a.getCreatedAt()).getTime(),
     );
     groupedEvents = sortedEvents.reduce(
       (groups, event) => {
-        const date = new Date(event.created_at).toDateString();
+        const date = new Date(event.getCreatedAt()).toDateString();
         if (!groups[date]) groups[date] = [];
         groups[date].push(event);
         return groups;
@@ -237,19 +244,19 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                       // Timeline Item Header for customer view
                       (() => {
                         const timelineItem = timelineItems.find(
-                          (item) => item.id.toString() === groupKey,
+                          (item) => item.getId().toString() === groupKey,
                         );
                         if (!timelineItem) return null;
 
                         return (
                           <div className="flex items-center gap-3 py-2">
                             <img
-                              src={timelineItem.icon}
-                              alt={timelineItem.label}
+                              src={timelineItem.getIcon()}
+                              alt={timelineItem.getLabel()}
                               className="h-6 w-6"
                             />
                             <h3 className="text-lg font-semibold text-[#212B36]">
-                              {timelineItem.label}
+                              {timelineItem.getLabel()}
                             </h3>
                             <span className="text-sm text-[#637381]">
                               ({events.length} event
@@ -274,19 +281,20 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                         {events.map((event, index) => {
                           // Check if this is an extension message (starts with [AI SMART DEALS])
                           const isExtensionMessage =
-                            event.message?.startsWith("[AI SMART DEALS]") ||
-                            false;
+                            event
+                              .getMessage()
+                              ?.startsWith("[AI SMART DEALS]") || false;
 
                           // Use UserEventCard for user messages (events without a label and not extension messages), otherwise use system message styling
                           // For customer events, treat them as system events since they're automated notifications
                           const isSystemMessage =
-                            event.label !== null ||
+                            event.getLabel() !== null ||
                             isExtensionMessage ||
                             isCustomerView;
                           if (!isSystemMessage) {
                             return (
                               <UserEventCard
-                                key={event.id}
+                                key={event.getId()}
                                 event={event}
                                 onReply={onReply}
                               />
@@ -296,7 +304,7 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                           // System message rendering
                           return (
                             <SystemEventCard
-                              key={event.id}
+                              key={event.getId()}
                               event={event}
                               isLast={index === events.length - 1}
                             />

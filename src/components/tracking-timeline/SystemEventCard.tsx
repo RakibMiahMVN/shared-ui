@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { ITrackingEvent } from "./types";
+import { TrackingEventModel } from "../../models/trackingEventCollectionModel";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SystemEventCardProps {
-  event: ITrackingEvent;
+  event: TrackingEventModel;
   isLast: boolean;
 }
 
@@ -16,7 +16,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
 
   // Check if this is an extension message
   const isExtensionMessage =
-    event.message?.startsWith("[AI SMART DEALS]") || false;
+    event.getContent()?.startsWith("[AI SMART DEALS]") || false;
 
   // Parse extension message format: [AI SMART DEALS] [TEMPLATE:Template Name] [MESSAGE:Actual message content]
   const parseExtensionMessage = (message: string) => {
@@ -31,7 +31,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
   };
 
   const extensionData = isExtensionMessage
-    ? parseExtensionMessage(event.message || "")
+    ? parseExtensionMessage(event.getContent() || "")
     : null;
 
   const bulletColors = {
@@ -39,6 +39,13 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
     success: "bg-[#10B981]",
     warning: "bg-[#F59E0B]",
     error: "bg-[#EF4444]",
+  };
+
+  const actorStyles = {
+    user: "bg-[#008060] text-white",
+    system: "bg-[#6366F1] text-white",
+    automation: "bg-[#8B5CF6] text-white",
+    customer: "bg-[#F59E0B] text-white",
   };
 
   // Determine actor information
@@ -54,11 +61,18 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
         type: "automation" as const,
         initials: "AI",
       }
-    : {
-        name: "Administrative Action",
-        type: "system" as const,
-        initials: "A",
-      };
+    : event.getCauser()
+      ? {
+          name: event.getCauser()?.getName() || "Unknown",
+          type: "user" as const,
+          initials:
+            event.getCauser()?.getName()?.charAt(0).toUpperCase() || "U",
+        }
+      : {
+          name: "Administrative Action",
+          type: "system" as const,
+          initials: "A",
+        };
 
   // Determine event type based on content or label
   const getEventType = (): "default" | "success" | "warning" | "error" => {
@@ -67,8 +81,8 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
       return "success";
     }
 
-    const label = event.label?.toLowerCase() || "";
-    const message = event.message?.toLowerCase() || "";
+    const label = event.getLabel()?.toLowerCase() || "";
+    const message = event.getContent()?.toLowerCase() || "";
 
     if (
       label.includes("error") ||
@@ -119,12 +133,13 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
       }
     }
 
-    const title = event.label || "System Event";
+    const title =
+      event.getLabel() || event.getTimelineItem()?.getLabel() || "System Event";
 
     return <span>{title}</span>;
   };
 
-  const timestamp = new Date(event.created_at).toLocaleTimeString("en-US", {
+  const timestamp = new Date(event.getCreatedAt()).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -144,10 +159,10 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
           {extensionData.content}
         </div>
       </div>
-    ) : event.message ? (
+    ) : event.getContent() ? (
       <div
         className="text-sm text-[#637381]"
-        dangerouslySetInnerHTML={{ __html: event.message || "" }}
+        dangerouslySetInnerHTML={{ __html: event.getContent() || "" }}
       />
     ) : null;
 
@@ -183,7 +198,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({
                 <div className="flex items-center gap-1.5">
                   {actor.initials && (
                     <div
-                      className={`flex h-4 w-4 items-center justify-center rounded text-[8px] bg-[#637381] text-white`}
+                      className={`flex h-4 w-4 items-center justify-center rounded text-[8px] ${actorStyles[actor.type]}`}
                     >
                       {actor.initials}
                     </div>

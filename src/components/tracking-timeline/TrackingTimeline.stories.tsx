@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import TrackingTimeline from "./TrackingTimeline";
 import { TrackingTimelineProvider } from "./TrackingTimelineProvider";
-import { FilterType, TrackingTimelineConfig, ITracker } from "./types";
+import { FilterType, TrackingTimelineConfig } from "./types";
 
 // Mock components for demo
 const MockRichTextEditor = ({
@@ -87,7 +87,7 @@ const MockTimelineEventSkeleton = ({ count }: any) => (
 
 // Mock data hook
 const useMockTimelineData = (_productId: string, _filter: FilterType) => {
-  const mockTracker: ITracker = {
+  const mockTrackerData = {
     object: "tracker",
     id: 123,
     track_for: "purchase",
@@ -97,6 +97,16 @@ const useMockTimelineData = (_productId: string, _filter: FilterType) => {
       timeline_items: {
         object: "collection",
         data: [
+          {
+            object: "timeline_item",
+            id: 1,
+            label: "Order Placed",
+            identifier: "order_placed",
+            description: "Order has been placed successfully",
+            icon: "📦",
+            display_order: 1,
+            created_at: new Date(Date.now() - 86400000).toISOString(),
+          },
           {
             object: "timeline_item",
             id: 1,
@@ -234,7 +244,7 @@ const useMockTimelineData = (_productId: string, _filter: FilterType) => {
   };
 
   return {
-    data: mockTracker,
+    data: mockTrackerData,
     isLoading: false,
     error: null,
   };

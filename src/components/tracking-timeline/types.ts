@@ -1,6 +1,8 @@
 // Generic types for the TrackingTimeline component
 export type FilterType = "staff" | "customer" | "public";
 
+import { TrackingEventModel } from "../../models/trackingEventCollectionModel";
+
 export interface ICommonUser {
   id: number;
   name: string;
@@ -134,6 +136,7 @@ export interface ITrackingEvent {
   mentions: ITrackingEventMentionCollection;
   created_at: string;
   updated_at: string;
+  is_edited?: boolean;
 }
 
 export interface ITrackingTimelineItemCollection {
@@ -158,6 +161,10 @@ export interface ITracker {
   track_for: string;
   timeline?: ITrackingTimeline;
   tracking_events: ITrackingEventCollection;
+}
+
+export interface ITimelineTracking {
+  data?: ITracker;
 }
 
 export interface TrackingTimelineConfig {
@@ -186,12 +193,12 @@ export interface TrackingTimelineConfig {
   }>;
 
   UserEventCard: React.ComponentType<{
-    event: ITrackingEvent;
+    event: TrackingEventModel;
     onReply?: (eventId: number, content: string) => Promise<void>;
   }>;
 
   SystemEventCard: React.ComponentType<{
-    event: ITrackingEvent;
+    event: TrackingEventModel;
     isLast: boolean;
   }>;
 
