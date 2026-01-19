@@ -195,6 +195,12 @@ export interface TrackingTimelineConfig {
   UserEventCard: React.ComponentType<{
     event: TrackingEventModel;
     onReply?: (eventId: number, content: string) => Promise<void>;
+    RichTextEditor: React.ComponentType<{
+      onSubmit: (html: string) => Promise<void>;
+      isSubmitting: boolean;
+      onVisibilityChange: (filter: FilterType) => void;
+      visibility: FilterType;
+    }>;
   }>;
 
   SystemEventCard: React.ComponentType<{

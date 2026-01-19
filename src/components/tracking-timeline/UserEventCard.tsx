@@ -10,6 +10,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FilterType } from "./types";
 
 interface Attachment {
   name: string;
@@ -25,9 +26,10 @@ interface UserEventCardProps {
   onReply?: (eventId: number, content: string) => Promise<void>;
   isSuperAgent?: boolean;
   RichTextEditor: React.ComponentType<{
-    onSubmit: (content: string) => void;
-    placeholder?: string;
-    initialContent?: string;
+    onSubmit: (html: string) => Promise<void>;
+    isSubmitting: boolean;
+    onVisibilityChange: (filter: FilterType) => void;
+    visibility: FilterType;
   }>;
 }
 
@@ -171,11 +173,12 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
           {isEditing ? (
             <div className="mt-2">
               <RichTextEditor
-                initialContent={event.getMessage() || ""}
-                placeholder="Edit comment..."
-                onSubmit={(content) =>
-                  handleUpdateComment(event.getId(), content)
+                onSubmit={async (content) =>
+                  await handleUpdateComment(event.getId(), content)
                 }
+                isSubmitting={false}
+                onVisibilityChange={() => {}}
+                visibility="public"
               />
               <div className="mt-2 flex gap-2">
                 <button
@@ -356,8 +359,12 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
               >
                 <div className="rounded bg-[#F9FAFB] p-3">
                   <RichTextEditor
-                    placeholder="Write a reply..."
-                    onSubmit={(content) => handleReplySubmit(content, "public")}
+                    onSubmit={async (content) =>
+                      await handleReplySubmit(content, "public")
+                    }
+                    isSubmitting={false}
+                    onVisibilityChange={() => {}}
+                    visibility="public"
                   />
                   <div className="mt-2 flex gap-2">
                     <button

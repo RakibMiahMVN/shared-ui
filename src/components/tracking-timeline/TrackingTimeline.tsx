@@ -297,6 +297,7 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                                 key={event.getId()}
                                 event={event}
                                 onReply={onReply}
+                                RichTextEditor={RichTextEditor}
                               />
                             );
                           }
