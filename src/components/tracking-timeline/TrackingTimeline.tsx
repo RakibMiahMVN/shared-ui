@@ -45,13 +45,13 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
   } = config;
 
   const {
-    data: timelineData,
+    data: tracker,
     isLoading,
     error,
   } = useTimelineData(productId, activeFilter);
 
-  const trackingEvents = timelineData?.trackingEvents || [];
-  const timelineItems = timelineData?.timelineItems;
+  const trackingEvents = tracker?.tracking_events?.data || [];
+  const timelineItems = tracker?.timeline?.timeline_items?.data;
 
   // Group events based on active filter
   let groupedEvents: Record<string, typeof trackingEvents> = {};
