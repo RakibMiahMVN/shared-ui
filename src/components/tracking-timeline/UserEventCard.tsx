@@ -10,7 +10,6 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FilterType } from "./types";
 
 interface Attachment {
   name: string;
@@ -28,8 +27,6 @@ interface UserEventCardProps {
   RichTextEditor: React.ComponentType<{
     onSubmit: (html: string) => Promise<void>;
     isSubmitting: boolean;
-    onVisibilityChange: (filter: FilterType) => void;
-    visibility: FilterType;
   }>;
 }
 
@@ -177,8 +174,6 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                   await handleUpdateComment(event.getId(), content)
                 }
                 isSubmitting={false}
-                onVisibilityChange={() => {}}
-                visibility="public"
               />
               <div className="mt-2 flex gap-2">
                 <button
@@ -363,8 +358,6 @@ const UserEventCard: React.FC<UserEventCardProps> = ({
                       await handleReplySubmit(content, "public")
                     }
                     isSubmitting={false}
-                    onVisibilityChange={() => {}}
-                    visibility="public"
                   />
                   <div className="mt-2 flex gap-2">
                     <button

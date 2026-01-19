@@ -198,8 +198,6 @@ export interface TrackingTimelineConfig {
     RichTextEditor: React.ComponentType<{
       onSubmit: (html: string) => Promise<void>;
       isSubmitting: boolean;
-      onVisibilityChange: (filter: FilterType) => void;
-      visibility: FilterType;
     }>;
   }>;
 

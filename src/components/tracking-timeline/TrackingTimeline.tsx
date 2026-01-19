@@ -297,7 +297,12 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
                                 key={event.getId()}
                                 event={event}
                                 onReply={onReply}
-                                RichTextEditor={RichTextEditor}
+                                RichTextEditor={
+                                  RichTextEditor as React.ComponentType<{
+                                    onSubmit: (html: string) => Promise<void>;
+                                    isSubmitting: boolean;
+                                  }>
+                                }
                               />
                             );
                           }
