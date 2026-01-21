@@ -34,7 +34,7 @@ export const TrackingTimelineProvider: React.FC<
 }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>(initialFilter);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
 
   const value = {
@@ -58,7 +58,7 @@ export const useTrackingTimeline = () => {
   const context = useContext(TrackingTimelineContext);
   if (context === undefined) {
     throw new Error(
-      "useTrackingTimeline must be used within a TrackingTimelineProvider"
+      "useTrackingTimeline must be used within a TrackingTimelineProvider",
     );
   }
   return context;

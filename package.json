@@ -4,7 +4,6 @@
   "description": "Shared UI components for MoveOn projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/RakibMiahMVN/shared-ui.git"
