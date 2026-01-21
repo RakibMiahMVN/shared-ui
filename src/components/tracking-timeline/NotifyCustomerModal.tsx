@@ -1,9 +1,9 @@
 import { X, Bell, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { TextArea, Input, Checkbox, Button } from "../ui";
-import Modal from "../ui/Modal";
-import Tooltip from "../ui/Tooltip";
-import { EmailPreviewModal } from "../ui/EmailPreviewModal";
+import { TextArea, Input, Checkbox, Button } from "../ui/index.js";
+import Modal from "../ui/Modal.js";
+import Tooltip from "../ui/Tooltip.js";
+import { EmailPreviewModal } from "../ui/EmailPreviewModal.js";
 import toast from "react-hot-toast";
 
 interface NotifyCustomerModalProps {
