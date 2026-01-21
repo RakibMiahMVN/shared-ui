@@ -174,6 +174,8 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
             buyProductId={buyProductId || productId}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
+            isSuperAgent={config.isSuperAgent}
+            onSendNotification={config.onSendNotification}
           />
         </div>
 

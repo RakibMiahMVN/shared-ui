@@ -190,6 +190,24 @@ export interface TrackingTimelineConfig {
     buyProductId: string;
     activeFilter: FilterType;
     onFilterChange: (filter: FilterType) => void;
+    isSuperAgent?: boolean;
+    onSendNotification?: (data: {
+      message: string;
+      emailSubject?: string;
+      emailBody?: string;
+      channels: string[];
+    }) => Promise<void>;
+  }>;
+
+  NotifyCustomerModal?: React.ComponentType<{
+    onClose: () => void;
+    buyProductId: string;
+    onSendNotification?: (data: {
+      message: string;
+      emailSubject?: string;
+      emailBody?: string;
+      channels: string[];
+    }) => Promise<void>;
   }>;
 
   UserEventCard: React.ComponentType<{
@@ -213,6 +231,17 @@ export interface TrackingTimelineConfig {
   // Utils
   formatDateDisplay: (date: string) => string;
   extractMentions: (html: string) => number[];
+
+  // Optional notification handler for customer notifications
+  onSendNotification?: (data: {
+    message: string;
+    emailSubject?: string;
+    emailBody?: string;
+    channels: string[];
+  }) => Promise<void>;
+
+  // Optional super agent flag
+  isSuperAgent?: boolean;
 
   // Constants
   TrackingEventVisibilityEnum: {
