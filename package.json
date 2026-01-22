@@ -1,6 +1,6 @@
 {
   "name": "@rakibmiahmvn/shared-ui",
-  "version": "1.1.7",
+  "version": "1.2.3",
   "description": "Shared UI components for MoveOn projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,9 +19,11 @@
     "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.5",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-portal": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "ai": "^6.0.31",
     "clsx": "^2.1.1",
     "date-fns": "^3.0.0",
     "framer-motion": "^10.16.2",

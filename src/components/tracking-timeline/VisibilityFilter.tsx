@@ -16,6 +16,8 @@ interface VisibilityFilterProps {
     emailBody?: string;
     channels: string[];
   }) => Promise<void>;
+  // AI functionality (optional)
+  apiKey?: string;
 }
 
 export function VisibilityFilter({
@@ -24,6 +26,7 @@ export function VisibilityFilter({
   buyProductId,
   isSuperAgent = false,
   onSendNotification,
+  apiKey,
 }: VisibilityFilterProps) {
   const [showNotifyModal, setShowNotifyModal] = useState(false);
   const filters: {
@@ -97,6 +100,7 @@ export function VisibilityFilter({
           onClose={() => setShowNotifyModal(false)}
           buyProductId={buyProductId}
           onSendNotification={onSendNotification}
+          apiKey={apiKey}
         />
       )}
     </>

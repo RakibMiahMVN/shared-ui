@@ -176,6 +176,7 @@ const TrackingTimeline: React.FC<TrackingTimelineProps> = ({
             onFilterChange={setActiveFilter}
             isSuperAgent={config.isSuperAgent}
             onSendNotification={config.onSendNotification}
+            apiKey={config.apiKey}
           />
         </div>
 

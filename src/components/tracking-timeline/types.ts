@@ -197,6 +197,8 @@ export interface TrackingTimelineConfig {
       emailBody?: string;
       channels: string[];
     }) => Promise<void>;
+    // AI functionality (optional)
+    apiKey?: string;
   }>;
 
   NotifyCustomerModal?: React.ComponentType<{
@@ -242,6 +244,9 @@ export interface TrackingTimelineConfig {
 
   // Optional super agent flag
   isSuperAgent?: boolean;
+
+  // AI functionality (optional)
+  apiKey?: string;
 
   // Constants
   TrackingEventVisibilityEnum: {

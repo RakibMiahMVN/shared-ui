@@ -4,6 +4,8 @@ import { TextArea, Input, Checkbox, Button } from "../ui";
 import Modal from "../ui/Modal";
 import Tooltip from "../ui/Tooltip";
 import { EmailPreviewModal } from "../ui/EmailPreviewModal";
+import { useAIGeneration } from "../../hooks/useAIGeneration";
+import { AIGenerationRequest } from "../../utils/aiService";
 import toast from "react-hot-toast";
 
 interface NotifyCustomerModalProps {
@@ -17,19 +19,14 @@ interface NotifyCustomerModalProps {
     channels: string[];
   }) => Promise<void>;
   // AI functionality (optional)
-  useAIGeneration?: () => {
-    isGenerating: boolean;
-    generateContent: (request: any) => Promise<any>;
-  };
-  AIGenerationRequest?: any;
+  apiKey?: string;
 }
 
 export function NotifyCustomerModal({
   onClose,
   buyProductId: _buyProductId,
   onSendNotification,
-  useAIGeneration,
-  AIGenerationRequest,
+  apiKey,
 }: NotifyCustomerModalProps) {
   const [selectedChannels, setSelectedChannels] = useState<string[]>([
     "timeline",
@@ -47,14 +44,10 @@ export function NotifyCustomerModal({
   const [showEmailPreview, setShowEmailPreview] = useState(false);
 
   // AI functionality
-  const aiHook = useAIGeneration?.();
-  const { isGenerating, generateContent } = aiHook || {
-    isGenerating: false,
-    generateContent: null,
-  };
+  const { isGenerating, generateContent } = useAIGeneration(apiKey || "");
 
   const handleSmartRewrite = async () => {
-    if (!generateContent || !AIGenerationRequest) return;
+    if (!generateContent || !apiKey) return;
 
     // Collect all current content as context
     const contextParts = [];
@@ -71,7 +64,7 @@ export function NotifyCustomerModal({
 
     const context = contextParts.join("\n\n") || "order update";
 
-    const aiRequest = {
+    const aiRequest: AIGenerationRequest = {
       type:
         selectedChannels.includes("email") &&
         selectedChannels.includes("timeline")
@@ -80,21 +73,24 @@ export function NotifyCustomerModal({
             ? "email"
             : "timeline",
       context: context,
+      emailSubject: emailSubject || undefined,
+      emailBody: emailBody || undefined,
+      timelineMessage: message || undefined,
     };
 
     const result = await generateContent(aiRequest);
 
     if (result) {
       // Update all fields with AI-generated content
-      if (result.emailSubject && selectedChannels.includes("email")) {
+      if (result.emailSubject) {
         setEmailSubject(result.emailSubject);
         setAiGenerated((prev) => ({ ...prev, emailSubject: true }));
       }
-      if (result.emailBody && selectedChannels.includes("email")) {
+      if (result.emailBody) {
         setEmailBody(result.emailBody);
         setAiGenerated((prev) => ({ ...prev, emailBody: true }));
       }
-      if (result.timelineMessage && selectedChannels.includes("timeline")) {
+      if (result.timelineMessage) {
         setMessage(result.timelineMessage);
         setAiGenerated((prev) => ({ ...prev, timelineMessage: true }));
       }
@@ -193,7 +189,7 @@ export function NotifyCustomerModal({
                   email.
                 </p>
               </div>
-              {generateContent && (
+              {apiKey && (
                 <Tooltip
                   content="Let AI polish your message based on what you've written"
                   side="bottom"
